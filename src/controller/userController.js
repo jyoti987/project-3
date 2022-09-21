@@ -61,6 +61,8 @@ const loginUser = async function (req, res){
             return res.status(400).send({ status: false, message: "email or the password is not corerct", });
         const token = jwt.sign({
             userId: user._id.toString(),
+            // iat: Math.floor(Date.now() / 1000), // to get time in second
+            // exp: Math.floor(Date.now() / 1000)+(60 * 60),// expire in hour
             email: user.email,
         },
             "JyotiVinayikaRajnigandha50groupsecretkey",

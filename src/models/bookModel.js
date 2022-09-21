@@ -24,17 +24,18 @@ const bookSchema = new mongoose.Schema({
         },
         category: { 
             type: String, 
-            required: true,},
-        subcategory: [string],
-        //    required: true,},
+            required: true},
+
+        subcategory: [String],
+    
         reviews: {
             type: Number, 
-            default: null, 
-            // comment: Holds number of reviews of this book
+            default: 0, 
+            
         },
         deletedAt: {
             type: Date, 
-            default: null,
+            default: Date,
             // when the document is deleted
         }, 
         isDeleted: {
@@ -42,11 +43,11 @@ const bookSchema = new mongoose.Schema({
             default: false
         },
         releasedAt: {
-            type: Date.format("YYYY-MM-DD"),
+            type: Date,
             required: true, 
             },
       
-},{timestamp: true})
+},{timestamps: true})
 
 
 
