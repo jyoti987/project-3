@@ -12,29 +12,32 @@ const createUser = async function(req, res){
 
         
         const titleData = data.title;
-        if (!data.title == "mr||mrs||miss") return res.status(400).send({ message: `title is mandatory in the request` });
+        if(!titleData) return res.status(400).send({status:false, message:"title is mandatory in the request"})
+        if (!["Mr", "Mrs", "Miss"].includes(titleData)) return res.status(400).send({status:false, message: "title should be Mr, Mrs, Miss" });
 
-        const NameData = data.name;
-        if (!data.name.match(/^(?![\. ])[a-zA-Z\. ]+(?<! )$/)) return res.status(400).send({ message: "name is mandatory in the request" })
+        const nameData = data.name;
+        if(!nameData) return res.status(400).send({status:false, message:"name is mandatory in the request"})
+        if (!nameData.match(/^(?![\. ])[a-zA-Z\. ]+(?<! )$/)) return res.status(400).send({status:false, message: "name should be in alphabets" })
         
         const phone = data.phone;
-        if (!data.phone.match(/^((0091)|(\+91)|0?)[6789]{1}\d{9}$/)) return res.status(400).send({ message: "phone is mandatory in the request" })
+        if(!phone) return res.status(400).send({status:false, message:"phone is mandatory in the request"})
+        if (!phone.match(/^((0091)|(\+91)|0?)[6789]{1}\d{9}$/)) return res.status(400).send({status:false, message: "phone number should be of 10 digits" })
 
         const emailData = data.email;
-        if (!data.email.match(/^([a-zA-Z0-9_.]+@[a-z]+\.[a-z]{2,3})?$/)) return res.send({ message: "email is mandatory in the request" });
+        if(!emailData) return res.status(400).send({status:false, message:"email is mandatory in the request"})
+        if (!emailData.match(/^([a-zA-Z0-9_.]+@[a-z]+\.[a-z]{2,3})?$/)) return res.send({status:false, message: "email is not valid" });
 
         const passwordData = data.password;
-        if (!data.password.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,99}$/)) return res.send({ message: "password is mandatory in the request with alphanumerical,higher-lower case values" });
+        if(!passwordData) return res.status(400).send({status:false, message:"password is mandatory in the request"})
+        if (!passwordData.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,99}$/)) return res.send({status:false, message: "password is mandatory in the request with alphanumerical,higher-lower case values" });
 
 
-        const address = data.address;
-        if (!data.address == "street"&&"city"&&"pincode") return res.status(400).send({ message: `address is mandatory in the request` });
-        
+       
         let savedData = await userModel.create(data);
-        res.status(201).send({ status: true, data: savedData})
+        res.status(201).send({ status: true, message:"Success", data: savedData})
 
 } catch (error) {
-    console.log(error); res.status(500).send({ message: error.msg });
+    console.log(error); res.status(500).send({status:false, message: error.message });
 
 }
 }
@@ -49,30 +52,30 @@ const loginUser = async function (req, res){
 
         let email = req.body.email;
         let password = req.body.password;
-        if (!(email && password))
-            return res.status(400).send({ status: false, message: "please provide emailid and password", })
-        if (!email.match(/^([a-zA-Z0-9_.]+@[a-z]+\.[a-z]{2,3})?$/))
-            return res.status(400).send({ status: false, message: "Wrong Email format" })
-        if (!password.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,99}$/))
-            return res.status(400).send({ status: false, message: "Wrong passowrd" })
-
+        if (!(email && password)){
+            return res.status(400).send({ status: false, message: "please provide emailid and password" })
+        }
+        
         let user = await userModel.findOne({ email: email, password: password });
-        if (!user)
-            return res.status(400).send({ status: false, message: "email or the password is not corerct", });
+        if (!user){
+            return res.status(404).send({ status: false, message: "user not found" })
+        }
         const token = jwt.sign({
             userId: user._id.toString(),
             // iat: Math.floor(Date.now() / 1000), // to get time in second
             // exp: Math.floor(Date.now() / 1000)+(60 * 60),// expire in hour
             email: user.email,
+            
         },
+
             "JyotiVinayikaRajnigandha50groupsecretkey",
             {
-                expiresIn: "24h"
+                expiresIn: '24hr'
             }
         );
-       res.status(200).send({ status: true, message: 'Success', data: {token}});
+       res.status(201).send({ status: true, message:"Success", token: token});
     } catch (error) {
-        res.status(500).send({ error: error.message })
+        res.status(500).send({status: false, error: error.message })
     }
 };
 
