@@ -1,6 +1,12 @@
 const userModel = require("../models/userModel")
 const jwt = require("jsonwebtoken")
 
+const isValid = function (value) {
+    if (typeof value === "undefined" || value === null) return false;
+    if (typeof value === "string" && value.trim().length === 0) return false;
+    return true;
+};
+
 // ======================== user register =============================
 const createUser = async function(req, res){
     try {
@@ -12,23 +18,23 @@ const createUser = async function(req, res){
 
         
         const titleData = data.title;
-        if(!titleData) return res.status(400).send({status:false, message:"title is mandatory in the request"})
+        if(!isValid(titleData)) return res.status(400).send({status:false, message:"title is mandatory in the request"})
         if (!["Mr", "Mrs", "Miss"].includes(titleData)) return res.status(400).send({status:false, message: "title should be Mr, Mrs, Miss" });
 
         const nameData = data.name;
-        if(!nameData) return res.status(400).send({status:false, message:"name is mandatory in the request"})
+        if(!isValid(nameData)) return res.status(400).send({status:false, message:"name is mandatory in the request"})
         if (!nameData.match(/^(?![\. ])[a-zA-Z\. ]+(?<! )$/)) return res.status(400).send({status:false, message: "name should be in alphabets" })
         
         const phone = data.phone;
-        if(!phone) return res.status(400).send({status:false, message:"phone is mandatory in the request"})
+        if(!isValid(phone)) return res.status(400).send({status:false, message:"phone number is mandatory in the request"})
         if (!phone.match(/^((0091)|(\+91)|0?)[6789]{1}\d{9}$/)) return res.status(400).send({status:false, message: "phone number should be of 10 digits" })
 
         const emailData = data.email;
-        if(!emailData) return res.status(400).send({status:false, message:"email is mandatory in the request"})
+        if(!isValid(emailData)) return res.status(400).send({status:false, message:"email is mandatory in the request"})
         if (!emailData.match(/^([a-zA-Z0-9_.]+@[a-z]+\.[a-z]{2,3})?$/)) return res.send({status:false, message: "email is not valid" });
 
         const passwordData = data.password;
-        if(!passwordData) return res.status(400).send({status:false, message:"password is mandatory in the request"})
+        if(!isValid(passwordData)) return res.status(400).send({status:false, message:"password is mandatory in the request"})
         if (!passwordData.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,99}$/)) return res.send({status:false, message: "password is mandatory in the request with alphanumerical,higher-lower case values" });
 
 
@@ -55,6 +61,7 @@ const loginUser = async function (req, res){
         if (!(email && password)){
             return res.status(400).send({ status: false, message: "please provide emailid and password" })
         }
+        
         
         let user = await userModel.findOne({ email: email, password: password });
         if (!user){

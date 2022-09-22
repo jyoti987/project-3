@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controller/userController")
+const bookController = require("../controller/bookController")
 
 
 router.get("/test-me", function (req, res) {
@@ -15,23 +16,23 @@ router.post("/login",userController.loginUser)
 
 //(Books Apis)
 // ====================== Create Book API ====================
-router.post ("/books",)
+router.post ("/books", bookController.createBook)
 
 
 // ====================== Get Book API ======================
-router.get ("/books",)
+router.get ("/books", bookController.getBooks)
 
 
 // ====================== Get Books by Book ID API ====================
-router.get ("/books/:bookId", )
+router.get ("/books/:bookId", bookController.getBooksbyId)
 
 
 // ====================== Update Books by Book id API ====================
-router.put(" /books/:bookId")
+router.put("/books/:bookId", bookController.updateBook)
 
 
 // ====================== Delete Book by book id API ====================
-router.delete ("/books/:bookId",)
+router.delete ("/books/:bookId", bookController.deleteBookById)
 
 //(Reviews Apis)
 //============================= Add review api by books and book id ===========================
