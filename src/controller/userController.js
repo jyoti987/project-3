@@ -35,7 +35,7 @@ const createUser = async function(req, res){
 
         const passwordData = data.password;
         if(!isValid(passwordData)) return res.status(400).send({status:false, message:"password is mandatory in the request"})
-        if (!passwordData.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,99}$/)) return res.send({status:false, message: "password is mandatory in the request with alphanumerical,higher-lower case values" });
+        if (!passwordData.match(/^(?=.?[A-Z])(?=.?[a-z])(?=.?[0-9])(?=.?[#?!@$%^&*-]).{8,99}$/)) return res.send({status:false, message: "password is mandatory in the request with alphanumerical,higher-lower case values" });
 
 
        
