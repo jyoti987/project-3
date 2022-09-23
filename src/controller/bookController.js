@@ -64,15 +64,20 @@ const createBook = async function (req, res) {
 const getBooks = async function (req, res) {
     try {
         let data = req.query
+        if (!isValidObjectId(data.userId)) return res.status(400).send({ status: false, msg: "userId must have 24 digits" })
+        
         if (data.title || data.excerpt || data.ISBN || data.review || data.isDeleted) {
             return res.status(400).send({ status: false, message: "Only userId, category and subcategory are accepted" })
 
         }
         const check = await bookModel.find(data).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, reviews: 1, releasedAt: 1 })
 
+        
+
         if (check.length == 0)
             return res.status(404).send({ status: false, message: "No books found" });
         let sortingtitle = check.sort(function (a, b) { return a.title.localeCompare(b.title) })
+       
         return res.status(200).send({ status: true, message: 'Books list', data: sortingtitle });
 
     } catch (error) {
@@ -93,7 +98,7 @@ const getBooksbyId = async function (req, res) {
 
         if (!Books) { return res.status(404).send("No Book Found") }
 
-        const reviewData = await reviewModel.find({ bookId: bookId, isDeleted: false })
+        const reviewData = await reviewModel.find({ bookId: bookId, isDeleted: false }).select({ __v: 0, isDeleted: 0, createdAt:0, updatedAt:0})
 
         const { _id, title, excerpt, userId, category, subcategory, isDeleted, reviews, releasedAt, createdAt, updatedAt } = Books
         let Output = {
