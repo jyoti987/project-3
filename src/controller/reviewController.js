@@ -19,12 +19,20 @@ const addReview = async function (req, res) {
     try {
         let data = req.body
         bookId = req.params.bookId
+
+        // let reviewedBy = data.reviewedBy
+        // let rating = data.rating
+        // if (!isValid(reviewedBy)) return res.status(400).send({ status: false, message: "reviewedBy field is mandatory" })
+        // if (!isValid(rating)) return res.status(400).send({ status: false, message: "rating field is mandatory" })
+
+
+        // if (rating < 1 || rating > 5) return res.status(400).send({ status: false, message: "rating can be between 1 to 5" })
         Book = await bookModel.findOne({ _id: bookId, isDeleted: false }).lean().select({ __v: 0, ISBN: 0 })
         if (!Book) {
             return res.status(404).send({ status: false, messge: "book of this BookId not found" })
         }
         let reviewCount = await reviewModel.find({ bookId: bookId, isDeleted: false }).count()
-        console.log(reviewCount)
+        // console.log(reviewCount)
         data["reviewedAt"] = Date.now()
         data["bookId"] = bookId
 
@@ -39,9 +47,9 @@ const addReview = async function (req, res) {
 
         Book["reviewsData"] = Object
         Book["reviews"] = reviewCount
-        await bookModel.findOneAndUpdate({_id:bookId, isDeleted:false}, {$set:{reviews:reviewCount}})
+        await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, { $set: { reviews: reviewCount } })
 
-        return res.status(201).send({ status: true, message:"Success", data: Book })
+        return res.status(201).send({ status: true, message: "Success", data: Book })
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
     }
@@ -70,7 +78,7 @@ const updateReview = async function (req, res) {
         }
 
         if (!isValidObjectId(reviewId)) {
-            return res.status(400).send({ status: false, mssg: "reviewId must have 24 digits" })
+            return res.status(400).send({ status: false, message: "reviewId must have 24 digits" })
         }
 
         let reviewID = await reviewModel.findById(reviewId)
@@ -82,13 +90,13 @@ const updateReview = async function (req, res) {
 
 
         if (!isValid(review)) {
-            return res.status(400).send({ status: false, mssg: "review is Required" })
+            return res.status(400).send({ status: false, message: "review is Required" })
         }
         if (!isValid(rating)) {
-            return res.status(400).send({ status: false, mssg: "rating is Required" })
+            return res.status(400).send({ status: false, message: "rating is Required" })
         }
         if (!isValid(reviewedBy)) {
-            return res.status(400).send({ status: false, mssg: "reviewedBy is Required" })
+            return res.status(400).send({ status: false, message: "reviewedBy is Required" })
         }
 
 
@@ -103,7 +111,7 @@ const updateReview = async function (req, res) {
 
         updatedBook["reviews"] = reviewCount
 
-        return res.status(200).send({ status: true, data: updatedBook })
+        return res.status(200).send({ status: true, message: "Success", data: updatedBook })
 
     } catch (error) {
         return res.status(500).send({ error: error.message });
@@ -128,12 +136,12 @@ const deletedReview = async function (req, res) {
             return res.status(400).send({ status: false, mssg: "reviewId must have 24 digits" })
         }
 
-        let reviewID = await reviewModel.findOne({_id:reviewId, isDeleted:false})
+        let reviewID = await reviewModel.findOne({ _id: reviewId, isDeleted: false })
         if (!reviewID) {
             return res.status(404).send({ status: false, message: "review not found" })
         }
 
-        await reviewModel.findOneAndUpdate({ _id: reviewId, isDeleted:false }, { $set: { isDeleted: true } })
+        await reviewModel.findOneAndUpdate({ _id: reviewId, isDeleted: false }, { $set: { isDeleted: true } })
         await bookModel.findOneAndUpdate({ _id: bookId }, { $inc: { reviews: -1 } })
         return res.status(200).send({ status: true, message: "Review deleted successfully" })
 

@@ -1,6 +1,7 @@
 const bookModel = require("../models/bookModel")
 const userModel = require("../models/userModel")
 const reviewModel = require("../models/reviewModel")
+const moment = require("moment")
 const mongoose = require("mongoose")
 
 const isValid = function (value) {
@@ -42,13 +43,15 @@ const createBook = async function (req, res) {
         if (!isValid(category)) return res.status(400).send({ status: false, msg: "category is Required" })
         if (!isValid(subcategory)) return res.status(400).send({ status: false, msg: "subcategory is Required" })
         if (!isValid(releasedAt)) return res.status(400).send({ status: false, msg: "releasedAt is Required" })
+        if (!moment.utc(releasedAt, "YYYY-MM-DD", true).isValid()) return res.status(400).send({ status: false, message: "enter date in valid format eg. (YYYY-MM-DD)...!" })
+
 
         let userID = await userModel.findById(userId)
         if (!userID) {
             return res.status(404).send({ status: false, msg: "userId is not valid" })
         }
         let savedData = await bookModel.create(data)
-        res.status(201).send({status:true, message:"Success", savedData})
+        res.status(201).send({status:true, message:"Success", data:savedData})
 
 
 
@@ -134,7 +137,7 @@ const updateBook = async function (req, res) {
         if (ISBNinfo) return res.status(400).send({ status: false, message: "ISBN already used" })
         const updatedBook = await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, { $set: data }, { new: true });
 
-        return res.status(200).send({ status: true, msg: updatedBook });
+        return res.status(200).send({ status: true, message:"success",data: updatedBook });
     }
     catch (error) {
         res.status(500).send({ status: false, error: error.message })
