@@ -32,7 +32,7 @@ const createBook = async function (req, res) {
         if (!isValid(excerpt)) return res.status(400).send({ status: false, msg: "excerpt is Required" })
         if (!isValid(userId)) return res.status(400).send({ status: false, msg: "userId is Required" })
 
-        if (!isValidObjectId(userId)) return res.status(400).send({ status: false, msg: "userId must have 24 digits" })
+        if (!isValidObjectId(userId)) return res.status(400).send({ status: false, msg: "userId is invalid" })
 
         if (!isValid(ISBN)) return res.status(400).send({ status: false, msg: "ISBN is Required" })
         if (ISBN.length > 13 || ISBN.length < 13) return res.status(400).send({ status: false, message: "ISBN no must be of 13 digits" })
@@ -48,7 +48,7 @@ const createBook = async function (req, res) {
             return res.status(404).send({ status: false, msg: "userId is not valid" })
         }
         let savedData = await bookModel.create(data)
-        res.status(201).send(savedData)
+        res.status(201).send({status:true, message:"Success", savedData})
 
 
 
@@ -64,7 +64,7 @@ const createBook = async function (req, res) {
 const getBooks = async function (req, res) {
     try {
         let data = req.query
-        if (!isValidObjectId(data.userId)) return res.status(400).send({ status: false, msg: "userId must have 24 digits" })
+        if (!isValidObjectId(data.userId)) return res.status(400).send({ status: false, msg: "userId is Invalid" })
         
         if (data.title || data.excerpt || data.ISBN || data.review || data.isDeleted) {
             return res.status(400).send({ status: false, message: "Only userId, category and subcategory are accepted" })
@@ -92,7 +92,7 @@ const getBooksbyId = async function (req, res) {
     try {
         let bookId = req.params.bookId
         if (!bookId) { return res.status(404).send({status:false, message:"Not a valid Book Id"}) }
-        if (!isValidObjectId(bookId)) return res.status(400).send({ status: false, msg: "bookId must have 24 digits" })
+        if (!isValidObjectId(bookId)) return res.status(400).send({ status: false, msg: "bookId is invalid" })
 
         let Books = await bookModel.findById(bookId)
 
@@ -119,7 +119,7 @@ const updateBook = async function (req, res) {
 
         const bookId = req.params.bookId
         if (!bookId) return res.status(400).send({ status: false, message: "please provide a bookId" })
-        if (!isValidObjectId(bookId)) return res.status(400).send({ status: false, msg: "bookId must have 24 digits" })
+        if (!isValidObjectId(bookId)) return res.status(400).send({ status: false, msg: "bookId is invalid" })
 
         let books = await bookModel.findOne({ _id: bookId, isDeleted: false })
         if (!books) return res.status(404).send({ status: false, message: "book not found" })
@@ -147,7 +147,7 @@ const deleteBookById = async function (req, res) {
         let BookId = req.params.bookId
         if (!BookId) { return res.status(404).send({status:false, message:"Kindly add Book ID"}) }
 
-        if (!isValidObjectId(BookId)) return res.status(400).send({ status: false, msg: "bookId must have 24 digits" })
+        if (!isValidObjectId(BookId)) return res.status(400).send({ status: false, msg: "bookId is invalid" })
 
         let Book = await bookModel.findOne({ _id: BookId, isDeleted: false })
         if (!Book) { return res.status(404).send({status:false, message:" Book not found"}) }

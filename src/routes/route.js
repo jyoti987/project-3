@@ -6,10 +6,6 @@ const reviewController = require("../controller/reviewController")
 const Middleware = require("../middleware/Auth")
 
 
-router.get("/test-me", function (req, res) {
-    res.send("My first ever api!")
-})
-//(User Apis)
 // ====================== Register  API ====================
 router.post("/register",userController.createUser)  
 
@@ -18,35 +14,40 @@ router.post("/login",userController.loginUser)
 
 //(Books Apis)
 // ====================== Create Book API ====================
-router.post ("/books", Middleware.authentication, bookController.createBook)  //authentication
+router.post ("/books", Middleware.authentication, bookController.createBook)  
 
 
 // ====================== Get Book API ======================
-router.get ("/books", Middleware.authentication, bookController.getBooks) //authentication
+router.get ("/books", Middleware.authentication, bookController.getBooks) 
 
 
 // ====================== Get Books by Book ID API ====================
-router.get ("/books/:bookId", Middleware.authentication, bookController.getBooksbyId) //authentication
+router.get ("/books/:bookId", Middleware.authentication, bookController.getBooksbyId) 
 
 
 // ====================== Update Books by Book id API ====================
-router.put("/books/:bookId", Middleware.authentication, Middleware.authorization, bookController.updateBook)  //authorisation
+router.put("/books/:bookId",  Middleware.authorization, bookController.updateBook) 
 
 
 // ====================== Delete Book by book id API ====================
-router.delete ("/books/:bookId", Middleware.authentication, Middleware.authorization, bookController.deleteBookById) //authorisation
+router.delete ("/books/:bookId",  Middleware.authorization, bookController.deleteBookById) 
 
 //(Reviews Apis)
 //============================= Add review api by books and book id ===========================
-router.post("/books/:bookId/review", reviewController.addReview) //authentication
+router.post("/books/:bookId/review", reviewController.addReview) 
 
 
 //================================ Update Review by books and book id =============================
-router.put("/books/:bookId/review/:reviewId", reviewController.updateReview) //authorisation
+router.put("/books/:bookId/review/:reviewId", reviewController.updateReview) 
 
 
 //================================ Delete Review by books and book id =============================
-router.delete("/books/:bookId/review/:reviewId",) //authorisation
+router.delete("/books/:bookId/review/:reviewId", reviewController.deletedReview) 
+
+
+router.all("/*", (req,res)=>{
+    return res.status(400).send({status:false, message:"Path not found"})
+})
 
 
 module.exports = router;
