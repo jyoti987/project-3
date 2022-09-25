@@ -14,17 +14,15 @@ const isValidPassword = function (value) {
 
  
 
-// const isValidRequestBody = (value) => {
-//     return Object.keys(value).length > 0
-// }
 
 
 
-// ======================== user register =============================
+
+// ======================== user register ============================================
 const createUser = async function (req, res) {
     try {
         const data = req.body;
-       // const {titleData, nameData, phone, emailData, passwordData, address} = data
+       
 
         if (Object.keys(data).length == 0) {
             return res.status(400).send({ status: false, message: "Body should not be empty" })
@@ -53,6 +51,7 @@ const createUser = async function (req, res) {
 
 
         const passwordData = data.password;
+        if (!isValid(passwordData)) return res.status(400).send({ status: false, message: "password is mandatory in the request" })
     
         if (!isValidPassword(passwordData)) return res.status(406).send({status: false, message: "enter valid password"})
         let uniquePassword = await userModel.findOne({ password: passwordData })
@@ -96,8 +95,12 @@ const loginUser = async function (req, res) {
 
         let email = req.body.email;
         let password = req.body.password;
-        if (!(email && password)) {
-            return res.status(400).send({ status: false, message: "please provide emailid and password" })
+        if (!(email)) {
+            return res.status(400).send({ status: false, message: "please provide emailid" })
+        }
+
+        if (!(password)) {
+            return res.status(400).send({ status: false, message: "please provide password" })
         }
 
 
