@@ -23,7 +23,7 @@ const addReview = async function (req, res) {
         const {rating, review, reviewedBy, reviewedAt} = data
 
         if(!isValidObjectId(bookId)) return res.status(400).send({status:false, message:"BookId is not valid"})
-        if(!isValid(reviewedBy)) return res.status(400).send({status:false, message:"reviewedBy is required"})
+        // if(!isValid(reviewedBy)) return res.status(400).send({status:false, message:"reviewedBy is required"})
 
         if(!isValid(reviewedAt)) return res.status(400).send({status:false, message:"reviewedAt is required"})
         if (!moment.utc(reviewedAt, "YYYY-MM-DD", true).isValid()) return res.status(400).send({ status: false, message: "enter date in valid format eg. (YYYY-MM-DD)...!" })
@@ -79,6 +79,7 @@ const updateReview = async function (req, res) {
             return res.status(400).send({ status: false, message: "Body should not be empty" })
         }
 
+
         if (!isValidObjectId(bookId)) {
             return res.status(400).send({ status: false, message: "bookId is invalid" })
         }
@@ -99,15 +100,15 @@ const updateReview = async function (req, res) {
 
 
 
-        if (!isValid(review)) {
-            return res.status(400).send({ status: false, message: "review is Required" })
-        }
-        if (!isValid(rating)) {
-            return res.status(400).send({ status: false, message: "rating is Required" })
-        }
-        if (!isValid(reviewedBy)) {
-            return res.status(400).send({ status: false, message: "reviewedBy is Required" })
-        }
+        // if (!isValid(review)) {
+        //     return res.status(400).send({ status: false, message: "review is Required" })
+        // }
+        // if (!isValid(rating)) {
+        //     return res.status(400).send({ status: false, message: "rating is Required" })
+        // }
+        // if (!isValid(reviewedBy)) {
+        //     return res.status(400).send({ status: false, message: "reviewedBy is Required" })
+        // }
 
 
 
